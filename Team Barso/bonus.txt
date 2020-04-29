@@ -1,0 +1,14 @@
+To save the bplus tree and rtree nodes to the disk we did the following:
+After getting a working bplus tree source code, we modified this code such that whenever a new node is created in the constructor of either InternalNode or LeafNode, we serialize this node to the following path : "data/" + tableName + IndexNum + "IndexNode" + id + ".ser" 
+where the tableName and IndexNum are provided whenever creating an Instance of this object and the id is a unique randomly generated string.
+We also save the nodes after splitting in the method Split(); where we save the current node being splitted and the new node created.
+Also nodes are saved after merging in the method merge(Node Sibling); where we save the current node.
+
+When it comes to the Root of the tree, we have a class called Root which has a String variable attribute which has the path to the Root Node, and we create an instance of this object in the contsructor of the tree Index, and we serialize it to the following path : "data/" + tableName + IndexNum + "ROOT" + ".ser"
+and whenever the Root is changed we deserialize this object update the path to be the path of the new Root and serialize it to the same path.
+
+note: we serialize and deserialize the  bplus tree or RTree classes themselves to be able to access their methods, they contain no nodes.
+
+however the methods themselves work in the following way; we first only get the root through the following path :  "data/" + tableName + IndexNum + "ROOT" + ".ser"
+and then each node has an attribute called children which is an array of strings, each string contains the filepath to a node, where each index in this array corrosponds to the Key in the attribute array called "keys".
+Then we deserialize the the intended child until we reach the LeafNode we want.
